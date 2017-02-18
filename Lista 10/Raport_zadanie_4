@@ -1,0 +1,58 @@
+Raport do zadania nr 4
+Wiktor Adamski (272220)
+
+Podpunkt a)
+
+    ./cache -n 13 -s 26 -t 40
+
+    Zakładamy, że rozmiar linii to 2^n B, a więc wczytując dane według poniższych permutacji,
+    powinniśmy generować coraz więcej chybień. W takim przypadku czas przejścia powinnien
+    rosnąć, aż dojdziemy permutacji w której bierzemy po tylko jednym elemencie z linii,
+    po czym powinien utrzymywać się na mniej więcej stałym poziomie (skacząc o więcej elementów
+    niż się zmieści w linii nadal będziemy generować jedno chybienie na każdy odczyt).
+    
+    ============================
+      Permutacja |  Średni czas
+    -------------+--------------
+     i -> i + 1  |   8.045s
+     i -> i + 2  |   8.045s
+     i -> i + 4  |   8.046s
+     i -> i + 8  |   8.052s
+     i -> i + 16 |   8.075s
+     i -> i + 32 |   8.052s
+     i -> i + 64 |   8.057s
+     i -> i + 128|   8.055s
+     
+     Jak widać, średni czas wykonania rośnie do permutacji i -> i + 16, co sugerowałoby,
+     że rozmiar linii to 16*4 B = 64 B.
+     
+     
+Podpunkt b)
+
+    ./cache -n X -s 26 -t 20
+    
+    Permutacją w tym przypadku będzie branie co 16. elementu (po jednym na linię),
+    przy czym za X podstawiałem kolejne liczby naturalne, szukając dużych
+    róźnic między czasami dla kolejnych wartości. Przypuszczenie jest takie, że
+    przy w sytuacji gdy rozmiar tablicy przestanie się mieścić w pamięci danego
+    poziomu (kolejno L1 dla danych, L2, L3), to zauważymy różnicę w czasie
+    wykonywania programu.
+    
+    ==============================
+            X     |  Średni czas
+    --------------+---------------
+      od 1  do 13 |      4.0s
+      od 14 do 16 |      6.8s
+      od 17 do 19 |      7.3s
+            20    |     10.0s
+      od 21 do 29 |     11.1s
+            30    |       (*)
+            
+    (*) - Na samo wygenerowanie permutacji zeszło około 30s, a poza tym 4*2^30 B to
+    jest już 4 GiB, co jest już o rzędy wielkości za dużą wartością od poszukiwanych.
+    
+    Na podstawie powyższych wyników przypuszczam, że rozmiar L1 dla danych to
+    4*2^13 B = 32 KiB, L2 ma rozmiar 4*2^16 B = 256 KiB, a L3 ma rozmiar
+    4*2^19 B = 2 MiB. Pomiar L3 jest obarczony dosyć sporą niedokładnością, może
+    to być tak naprawdę inna wartość z predziału [2 MiB, 4 MiB). 
+      
